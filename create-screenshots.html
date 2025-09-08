@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Prompter Screenshots Generator</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .screenshot-container {
+            width: 1280px;
+            height: 800px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            position: relative;
+            overflow: hidden;
+        }
+        .extension-popup {
+            width: 400px;
+            min-height: 500px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .logo-icon {
+            font-size: 24px;
+        }
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+        }
+        .subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+            margin: 0;
+        }
+        .main-content {
+            padding: 24px;
+        }
+        .input-section {
+            margin-bottom: 20px;
+        }
+        .input-label {
+            display: block;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 80px;
+            background: #f8fafc;
+        }
+        .char-counter {
+            text-align: right;
+            font-size: 12px;
+            color: #718096;
+            margin-top: 4px;
+        }
+        .generate-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .output-section {
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+        .output-header {
+            background: #667eea;
+            color: white;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .output-header h3 {
+            font-size: 14px;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 6px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .output-content {
+            padding: 16px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #4a5568;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .footer {
+            background: #f7fafc;
+            padding: 16px 24px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #718096;
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #48bb78;
+        }
+        .footer-links {
+            display: flex;
+            gap: 12px;
+        }
+        .clear-btn, .help-btn {
+            background: none;
+            border: none;
+            color: #667eea;
+            font-size: 12px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 0 10px;
+        }
+        .btn:hover {
+            background: #5a67d8;
+        }
+        .screenshot-title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <h1>AI Prompter Screenshots Generator</h1>
+        <p>Generate Chrome Web Store screenshots (1280x800)</p>
+        <button class="btn" onclick="generateScreenshot('main')">Screenshot 1: Main Interface</button>
+        <button class="btn" onclick="generateScreenshot('input')">Screenshot 2: Input Example</button>
+        <button class="btn" onclick="generateScreenshot('output')">Screenshot 3: Generated Output</button>
+        <button class="btn" onclick="generateScreenshot('help')">Screenshot 4: Help Modal</button>
+    </div>
+
+    <div id="screenshotContainer"></div>
+
+    <script>
+        function generateScreenshot(type) {
+            const container = document.getElementById('screenshotContainer');
+            container.innerHTML = '';
+            
+            const screenshotDiv = document.createElement('div');
+            screenshotDiv.className = 'screenshot-container';
+            
+            const title = document.createElement('div');
+            title.className = 'screenshot-title';
+            title.textContent = getScreenshotTitle(type);
+            screenshotDiv.appendChild(title);
+            
+            const popup = createPopupHTML(type);
+            screenshotDiv.appendChild(popup);
+            
+            container.appendChild(screenshotDiv);
+            
+            // Add download button
+            const downloadBtn = document.createElement('button');
+            downloadBtn.className = 'btn';
+            downloadBtn.textContent = 'Download Screenshot';
+            downloadBtn.style.marginTop = '20px';
+            downloadBtn.onclick = () => downloadScreenshot(screenshotDiv, type);
+            container.appendChild(downloadBtn);
+        }
+        
+        function getScreenshotTitle(type) {
+            const titles = {
+                'main': 'Screenshot 1: Clean Interface',
+                'input': 'Screenshot 2: Input Example',
+                'output': 'Screenshot 3: Generated Output',
+                'help': 'Screenshot 4: Help System'
+            };
+            return titles[type];
+        }
+        
+        function createPopupHTML(type) {
+            const popup = document.createElement('div');
+            popup.className = 'extension-popup';
+            
+            let content = '';
+            
+            switch(type) {
+                case 'main':
+                    content = `
+                        <div class="header">
+                            <div class="logo">
+                                <span class="logo-icon">✨</span>
+                                <h1>AI Prompter</h1>
+                            </div>
+                            <p class="subtitle">Transform rough ideas into creative prompts</p>
+                        </div>
+                        <div class="main-content">
+                            <div class="input-section">
+                                <label class="input-label">What's your idea?</label>
+                                <textarea placeholder="e.g., I want to create a website like Amazon for selling handmade crafts..." rows="4"></textarea>
+                                <div class="char-counter">0/1000 characters</div>
+                            </div>
+                            <button class="generate-btn">
+                                <span>🚀</span>
+                                <span>Generate Prompt</span>
+                            </button>
+                        </div>
+                        <div class="footer">
+                            <div class="status-indicator">
+                                <span class="status-dot"></span>
+                                <span>Ready</span>
+                            </div>
+                            <div class="footer-links">
+                                <button class="clear-btn">Clear</button>
+                                <button class="help-btn">Help</button>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'input':
+                    content = `
+                        <div class="header">
+                            <div class="logo">
+                                <span class="logo-icon">✨</span>
+                                <h1>AI Prompter</h1>
+                            </div>
+                            <p class="subtitle">Transform rough ideas into creative prompts</p>
+                        </div>
+                        <div class="main-content">
+                            <div class="input-section">
+                                <label class="input-label">What's your idea?</label>
+                                <textarea rows="4">I want to create a website like Amazon for selling handmade crafts</textarea>
+                                <div class="char-counter">67/1000 characters</div>
+                            </div>
+                            <button class="generate-btn">
+                                <span>🚀</span>
+                                <span>Generate Prompt</span>
+                            </button>
+                        </div>
+                        <div class="footer">
+                            <div class="status-indicator">
+                                <span class="status-dot"></span>
+                                <span>Ready</span>
+                            </div>
+                            <div class="footer-links">
+                                <button class="clear-btn">Clear</button>
+                                <button class="help-btn">Help</button>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'output':
+                    content = `
+                        <div class="header">
+                            <div class="logo">
+                                <span class="logo-icon">✨</span>
+                                <h1>AI Prompter</h1>
+                            </div>
+                            <p class="subtitle">Transform rough ideas into creative prompts</p>
+                        </div>
+                        <div class="main-content">
+                            <div class="input-section">
+                                <label class="input-label">What's your idea?</label>
+                                <textarea rows="4">I want to create a website like Amazon for selling handmade crafts</textarea>
+                                <div class="char-counter">67/1000 characters</div>
+                            </div>
+                            <button class="generate-btn">
+                                <span>🚀</span>
+                                <span>Generate Prompt</span>
+                            </button>
+                            <div class="output-section">
+                                <div class="output-header">
+                                    <h3><span>✨</span>Refined Prompt</h3>
+                                    <button class="copy-btn">📋</button>
+                                </div>
+                                <div class="output-content">Create a comprehensive e-commerce platform similar to Amazon, specifically designed for handmade crafts and artisanal products. The platform should include:
+
+**Core Features:**
+- Multi-vendor marketplace with seller registration and verification
+- Advanced search and filtering by craft category, materials, and artisan location
+- Secure payment processing with multiple payment methods
+- Review and rating system for products and sellers
+- Mobile-responsive design with intuitive navigation
+
+**Target Audience:** Artisans, craft enthusiasts, and buyers seeking unique, handmade items
+
+**Design Style:** Clean, modern interface with warm, artisanal color palette emphasizing craftsmanship and authenticity
+
+**Technical Requirements:** Scalable architecture, SEO optimization, and integration with shipping providers
+
+Focus on creating a trusted community marketplace that celebrates handmade artistry while providing professional e-commerce functionality.</div>
+                            </div>
+                        </div>
+                        <div class="footer">
+                            <div class="status-indicator">
+                                <span class="status-dot"></span>
+                                <span>Success</span>
+                            </div>
+                            <div class="footer-links">
+                                <button class="clear-btn">Clear</button>
+                                <button class="help-btn">Help</button>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'help':
+                    content = `
+                        <div class="header">
+                            <div class="logo">
+                                <span class="logo-icon">✨</span>
+                                <h1>AI Prompter</h1>
+                            </div>
+                            <p class="subtitle">Transform rough ideas into creative prompts</p>
+                        </div>
+                        <div class="main-content">
+                            <div class="input-section">
+                                <label class="input-label">What's your idea?</label>
+                                <textarea placeholder="e.g., I want to create a website like Amazon for selling handmade crafts..." rows="4"></textarea>
+                                <div class="char-counter">0/1000 characters</div>
+                            </div>
+                            <button class="generate-btn">
+                                <span>🚀</span>
+                                <span>Generate Prompt</span>
+                            </button>
+                        </div>
+                        <div class="footer">
+                            <div class="status-indicator">
+                                <span class="status-dot"></span>
+                                <span>Ready</span>
+                            </div>
+                            <div class="footer-links">
+                                <button class="clear-btn">Clear</button>
+                                <button class="help-btn">Help</button>
+                            </div>
+                        </div>
+                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;">
+                            <div style="background: white; border-radius: 12px; max-width: 350px; max-height: 400px; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
+                                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
+                                    <h2 style="margin: 0; font-size: 18px;">How to use AI Prompter</h2>
+                                    <button style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">&times;</button>
+                                </div>
+                                <div style="padding: 24px;">
+                                    <div style="margin-bottom: 20px;">
+                                        <h3 style="font-size: 16px; color: #4a5568; margin-bottom: 8px;">📝 Getting Started</h3>
+                                        <p style="font-size: 14px; color: #718096; margin-bottom: 8px;">Simply type your rough idea or concept in the text area above. The AI will transform it into a detailed, creative prompt.</p>
+                                    </div>
+                                    <div style="margin-bottom: 20px;">
+                                        <h3 style="font-size: 16px; color: #4a5568; margin-bottom: 8px;">💡 Examples</h3>
+                                        <ul style="font-size: 14px; color: #718096; padding-left: 20px;">
+                                            <li>"I want a website like Amazon"</li>
+                                            <li>"Create a mobile app for fitness tracking"</li>
+                                            <li>"Design a logo for my coffee shop"</li>
+                                            <li>"Write a story about time travel"</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+            }
+            
+            popup.innerHTML = content;
+            return popup;
+        }
+        
+        function downloadScreenshot(element, type) {
+            // Create canvas to capture the screenshot
+            const canvas = document.createElement('canvas');
+            canvas.width = 1280;
+            canvas.height = 800;
+            const ctx = canvas.getContext('2d');
+            
+            // Fill background
+            ctx.fillStyle = '#f5f5f5';
+            ctx.fillRect(0, 0, 1280, 800);
+            
+            // Draw the extension popup
+            const popup = element.querySelector('.extension-popup');
+            if (popup) {
+                // This is a simplified version - in a real implementation,
+                // you'd use html2canvas or similar library
+                ctx.fillStyle = 'white';
+                ctx.fillRect(440, 150, 400, 500);
+                
+                // Add some basic shapes to represent the UI
+                ctx.fillStyle = '#667eea';
+                ctx.fillRect(440, 150, 400, 80);
+                
+                ctx.fillStyle = '#333';
+                ctx.font = '24px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('AI Prompter', 640, 200);
+            }
+            
+            // Download
+            const link = document.createElement('a');
+            link.download = `ai-prompter-screenshot-${type}-1280x800.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Prompter</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">✨</span>
+                <h1>AI Prompter</h1>
+            </div>
+            <p class="subtitle">Transform rough ideas into creative prompts</p>
+        </header>
+
+        <main class="main-content">
+            <div class="input-section">
+                <label for="userInput" class="input-label">What's your idea?</label>
+                <textarea 
+                    id="userInput" 
+                    placeholder="e.g., I want to create a website like Amazon for selling handmade crafts..."
+                    rows="4"
+                    maxlength="1000"
+                ></textarea>
+                <div class="char-counter">
+                    <span id="charCount">0</span>/1000 characters
+                </div>
+            </div>
+
+            <button id="generateBtn" class="generate-btn" disabled>
+                <span class="btn-icon">🚀</span>
+                <span class="btn-text">Generate Prompt</span>
+                <div class="loading-spinner" id="loadingSpinner"></div>
+            </button>
+
+            <div class="output-section" id="outputSection" style="display: none;">
+                <div class="output-header">
+                    <span class="output-icon">✨</span>
+                    <h3>Refined Prompt</h3>
+                    <button id="copyBtn" class="copy-btn" title="Copy to clipboard">
+                        <span class="copy-icon">📋</span>
+                    </button>
+                </div>
+                <div class="output-content" id="outputContent"></div>
+            </div>
+
+            <div class="error-section" id="errorSection" style="display: none;">
+                <div class="error-header">
+                    <span class="error-icon">⚠️</span>
+                    <h3>Error</h3>
+                </div>
+                <div class="error-content" id="errorContent"></div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <div class="status-indicator" id="statusIndicator">
+                <span class="status-dot"></span>
+                <span class="status-text">Ready</span>
+            </div>
+            <div class="footer-links">
+                <button id="clearBtn" class="clear-btn">Clear</button>
+                <button id="helpBtn" class="help-btn">Help</button>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="helpModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>How to use AI Prompter</h2>
+                <button id="closeModal" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="help-section">
+                    <h3>📝 Getting Started</h3>
+                    <p>Simply type your rough idea or concept in the text area above. The AI will transform it into a detailed, creative prompt.</p>
+                </div>
+                
+                <div class="help-section">
+                    <h3>💡 Examples</h3>
+                    <ul>
+                        <li>"I want a website like Amazon"</li>
+                        <li>"Create a mobile app for fitness tracking"</li>
+                        <li>"Design a logo for my coffee shop"</li>
+                        <li>"Write a story about time travel"</li>
+                    </ul>
+                </div>
+                
+                <div class="help-section">
+                    <h3>🔧 Tips</h3>
+                    <ul>
+                        <li>Be specific about your goals</li>
+                        <li>Include target audience if relevant</li>
+                        <li>Mention any style preferences</li>
+                        <li>Keep it under 1000 characters</li>
+                    </ul>
+                </div>
+                
+                <div class="help-section">
+                    <h3>⚠️ Troubleshooting</h3>
+                    <p>If you're getting errors, make sure:</p>
+                    <ul>
+                        <li>Your backend server is running on localhost:5000</li>
+                        <li>You have a valid Gemini API key configured</li>
+                        <li>Your internet connection is stable</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>

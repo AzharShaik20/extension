@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Icons for AI Prompter</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .icon { margin: 20px; display: inline-block; }
+        canvas { border: 1px solid #ccc; }
+        .download-btn { margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>AI Prompter Icon Generator</h1>
+    <p>This page generates the required icons for the Chrome extension. Click "Download" for each size.</p>
+    
+    <div class="icon">
+        <h3>16x16</h3>
+        <canvas id="icon16" width="16" height="16"></canvas>
+        <br>
+        <button class="download-btn" onclick="downloadIcon('icon16', 'icon16.png')">Download</button>
+    </div>
+    
+    <div class="icon">
+        <h3>32x32</h3>
+        <canvas id="icon32" width="32" height="32"></canvas>
+        <br>
+        <button class="download-btn" onclick="downloadIcon('icon32', 'icon32.png')">Download</button>
+    </div>
+    
+    <div class="icon">
+        <h3>48x48</h3>
+        <canvas id="icon48" width="48" height="48"></canvas>
+        <br>
+        <button class="download-btn" onclick="downloadIcon('icon48', 'icon48.png')">Download</button>
+    </div>
+    
+    <div class="icon">
+        <h3>128x128</h3>
+        <canvas id="icon128" width="128" height="128"></canvas>
+        <br>
+        <button class="download-btn" onclick="downloadIcon('icon128', 'icon128.png')">Download</button>
+    </div>
+
+    <script>
+        function drawIcon(canvasId, size) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            
+            // Background gradient
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#667eea');
+            gradient.addColorStop(1, '#764ba2');
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+            
+            // Sparkle icon
+            ctx.fillStyle = 'white';
+            ctx.font = `${size * 0.6}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('✨', size/2, size/2);
+            
+            // Border
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(0, 0, size, size);
+        }
+        
+        function downloadIcon(canvasId, filename) {
+            const canvas = document.getElementById(canvasId);
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+        
+        // Generate all icons
+        drawIcon('icon16', 16);
+        drawIcon('icon32', 32);
+        drawIcon('icon48', 48);
+        drawIcon('icon128', 128);
+    </script>
+</body>
+</html>

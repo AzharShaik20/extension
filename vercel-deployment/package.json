@@ -1,0 +1,17 @@
+{
+  "name": "ai-prompter-backend",
+  "version": "1.0.1",
+  "description": "Backend server for AI Prompter Chrome Extension",
+  "type": "module",
+  "main": "api/generate.js",
+  "scripts": {
+    "start": "vercel dev",
+    "build": "echo 'No build step required'"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
