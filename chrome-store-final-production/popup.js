@@ -1,9 +1,9 @@
 // AI Prompter Chrome Extension - Popup Script (Localhost Version)
 class AIPrompter {
     constructor() {
-        // Production API URL for Chrome Web Store
-        this.apiUrl = 'https://ai-prompter-extension.vercel.app/api';
-        this.fallbackApiUrl = 'http://localhost:5000';
+        // For development, prioritize localhost first
+        this.apiUrl = 'http://localhost:5000';
+        this.fallbackApiUrl = 'https://ai-prompter-extension.vercel.app/api';
         this.maxRetries = 3;
         this.retryDelay = 1000;
         
@@ -94,15 +94,33 @@ class AIPrompter {
 
     updateCharacterCount() {
         const count = this.userInput.value.length;
+        const maxCount = 1000;
+        const percentage = (count / maxCount) * 100;
+        
         this.charCount.textContent = count;
+        
+        // Update progress bar
+        const progressBar = document.getElementById('charProgressBar');
+        if (progressBar) {
+            progressBar.style.width = `${percentage}%`;
+        }
         
         // Change color based on character count
         if (count > 900) {
-            this.charCount.style.color = '#e53e3e';
+            this.charCount.style.color = '#ef4444';
+            if (progressBar) {
+                progressBar.style.background = 'linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)';
+            }
         } else if (count > 700) {
-            this.charCount.style.color = '#ed8936';
+            this.charCount.style.color = '#f59e0b';
+            if (progressBar) {
+                progressBar.style.background = 'linear-gradient(135deg, #feca57 0%, #ff9ff3 100%)';
+            }
         } else {
-            this.charCount.style.color = '#718096';
+            this.charCount.style.color = '#64748b';
+            if (progressBar) {
+                progressBar.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            }
         }
     }
 
@@ -122,40 +140,50 @@ class AIPrompter {
     async checkServerStatus() {
         console.log('Checking server status...');
         try {
-            // Try production API first
-            console.log('Trying production API:', this.apiUrl);
+            // Try localhost API first (for development)
+            console.log('Trying localhost API:', this.apiUrl);
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
+            
             const response = await fetch(`${this.apiUrl}/health`, {
                 method: 'GET',
-                timeout: 5000
+                signal: controller.signal
             });
             
+            clearTimeout(timeoutId);
+            
             if (response.ok) {
-                console.log('Production API is working');
-                this.updateStatus('Ready', 'success');
+                console.log('Localhost API is working');
+                this.updateStatus('Ready (Local)', 'success');
                 return;
             }
         } catch (error) {
-            console.log('Production API failed:', error.message);
+            console.log('Localhost API failed:', error.message);
         }
         
-        // Try fallback API
+        // Try fallback API (production)
         try {
-            console.log('Trying localhost API:', this.fallbackApiUrl);
+            console.log('Trying production API:', this.fallbackApiUrl);
+            const fallbackController = new AbortController();
+            const fallbackTimeoutId = setTimeout(() => fallbackController.abort(), 5000);
+            
             const fallbackResponse = await fetch(`${this.fallbackApiUrl}/health`, {
                 method: 'GET',
-                timeout: 5000
+                signal: fallbackController.signal
             });
             
+            clearTimeout(fallbackTimeoutId);
+            
             if (fallbackResponse.ok) {
-                console.log('Localhost API is working');
+                console.log('Production API is working');
                 this.apiUrl = this.fallbackApiUrl;
-                this.updateStatus('Ready (Local)', 'success');
+                this.updateStatus('Ready', 'success');
             } else {
-                console.log('Localhost API returned error:', fallbackResponse.status);
+                console.log('Production API returned error:', fallbackResponse.status);
                 this.updateStatus('Server Error', 'error');
             }
         } catch (fallbackError) {
-            console.log('Localhost API failed:', fallbackError.message);
+            console.log('Production API failed:', fallbackError.message);
             this.updateStatus('Server Offline', 'error');
         }
     }
@@ -317,12 +345,26 @@ class AIPrompter {
 
         try {
             await navigator.clipboard.writeText(content);
-            this.copyBtn.classList.add('copied');
-            this.copyBtn.title = 'Copied!';
             
+            // Enhanced visual feedback
+            this.copyBtn.classList.add('copied');
+            const copyText = this.copyBtn.querySelector('.copy-text');
+            if (copyText) {
+                copyText.textContent = 'Copied!';
+            }
+            
+            // Add success animation
+            this.copyBtn.style.transform = 'scale(1.05)';
+            setTimeout(() => {
+                this.copyBtn.style.transform = 'scale(1)';
+            }, 150);
+            
+            // Reset after 2 seconds
             setTimeout(() => {
                 this.copyBtn.classList.remove('copied');
-                this.copyBtn.title = 'Copy to clipboard';
+                if (copyText) {
+                    copyText.textContent = 'Copy';
+                }
             }, 2000);
             
         } catch (error) {

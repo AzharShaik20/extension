@@ -41,28 +41,29 @@ app.get('/health', (req, res) => {
 
 // Main prompt generation endpoint
 app.post('/generate', async (req, res) => {
+  const { userInput } = req.body;
+
+  // Validate input
+  if (!userInput || typeof userInput !== 'string' || userInput.trim().length === 0) {
+    return res.status(400).json({ 
+      error: 'Invalid input. Please provide a non-empty string.' 
+    });
+  }
+
+  if (userInput.length > 1000) {
+    return res.status(400).json({ 
+      error: 'Input too long. Please keep it under 1000 characters.' 
+    });
+  }
+
+  console.log(`📝 Processing request: "${userInput.substring(0, 50)}..."`);
+  console.log(`🔑 Using API key: ${GEMINI_API_KEY.substring(0, 10)}...`);
+
+  // Call Gemini API
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
   try {
-    const { userInput } = req.body;
-
-    // Validate input
-    if (!userInput || typeof userInput !== 'string' || userInput.trim().length === 0) {
-      return res.status(400).json({ 
-        error: 'Invalid input. Please provide a non-empty string.' 
-      });
-    }
-
-    if (userInput.length > 1000) {
-      return res.status(400).json({ 
-        error: 'Input too long. Please keep it under 1000 characters.' 
-      });
-    }
-
-    console.log(`📝 Processing request: "${userInput.substring(0, 50)}..."`);
-    console.log(`🔑 Using API key: ${GEMINI_API_KEY.substring(0, 10)}...`);
-
-    // Call Gemini API
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
     
     const geminiResponse = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
@@ -116,6 +117,9 @@ Please provide only the refined prompt, no additional commentary or explanations
     const generatedPrompt = data.candidates[0].content.parts[0].text;
     
     console.log('✅ Successfully generated prompt');
+    
+    // Clear timeout on success
+    clearTimeout(timeoutId);
     
     res.json({ 
       result: generatedPrompt,
