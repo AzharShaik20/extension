@@ -1,7 +1,7 @@
-// AI Prompter Chrome Extension - Popup Script (Localhost Version)
+// AI Prompter Chrome Extension - Popup Script
 class AIPrompter {
     constructor() {
-        // Production API URL for Chrome Web Store
+        // Try production API first, fallback to localhost for development
         this.apiUrl = 'https://ai-prompter-extension.vercel.app/api';
         this.fallbackApiUrl = 'http://localhost:5000';
         this.maxRetries = 3;
@@ -196,7 +196,6 @@ class AIPrompter {
 
     async callAPI(input, retryCount = 0) {
         try {
-            console.log('Calling API with input:', input);
             const response = await fetch(`${this.apiUrl}/generate`, {
                 method: 'POST',
                 headers: {
@@ -205,8 +204,6 @@ class AIPrompter {
                 body: JSON.stringify({ userInput: input }),
                 signal: AbortSignal.timeout(30000) // 30 second timeout
             });
-
-            console.log('API response status:', response.status);
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));

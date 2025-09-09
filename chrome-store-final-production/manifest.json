@@ -9,7 +9,9 @@
   ],
   "host_permissions": [
     "https://ai-prompter-extension.vercel.app/*",
-    "https://*.vercel.app/*"
+    "https://*.vercel.app/*",
+    "http://localhost:5000/*",
+    "https://localhost:5000/*"
   ],
   "action": {
     "default_popup": "popup.html",

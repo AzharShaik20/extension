@@ -1,13 +1,11 @@
 // AI Prompter Chrome Extension - Popup Script (Localhost Version)
 class AIPrompter {
     constructor() {
-        // Production API URL for Chrome Web Store
-        this.apiUrl = 'https://ai-prompter-extension.vercel.app/api';
-        this.fallbackApiUrl = 'http://localhost:5000';
+        this.apiUrl = 'http://localhost:5000';
         this.maxRetries = 3;
         this.retryDelay = 1000;
         
-        console.log('AI Prompter initialized with API URL:', this.apiUrl);
+        console.log('AI Prompter initialized with localhost API:', this.apiUrl);
         
         this.initializeElements();
         this.setupEventListeners();
@@ -120,42 +118,22 @@ class AIPrompter {
     }
 
     async checkServerStatus() {
-        console.log('Checking server status...');
+        console.log('Checking localhost server status...');
         try {
-            // Try production API first
-            console.log('Trying production API:', this.apiUrl);
             const response = await fetch(`${this.apiUrl}/health`, {
                 method: 'GET',
                 timeout: 5000
             });
             
             if (response.ok) {
-                console.log('Production API is working');
-                this.updateStatus('Ready', 'success');
-                return;
-            }
-        } catch (error) {
-            console.log('Production API failed:', error.message);
-        }
-        
-        // Try fallback API
-        try {
-            console.log('Trying localhost API:', this.fallbackApiUrl);
-            const fallbackResponse = await fetch(`${this.fallbackApiUrl}/health`, {
-                method: 'GET',
-                timeout: 5000
-            });
-            
-            if (fallbackResponse.ok) {
                 console.log('Localhost API is working');
-                this.apiUrl = this.fallbackApiUrl;
                 this.updateStatus('Ready (Local)', 'success');
             } else {
-                console.log('Localhost API returned error:', fallbackResponse.status);
+                console.log('Localhost API returned error:', response.status);
                 this.updateStatus('Server Error', 'error');
             }
-        } catch (fallbackError) {
-            console.log('Localhost API failed:', fallbackError.message);
+        } catch (error) {
+            console.log('Localhost API failed:', error.message);
             this.updateStatus('Server Offline', 'error');
         }
     }
@@ -222,13 +200,6 @@ class AIPrompter {
             return data.result;
 
         } catch (error) {
-            // If production API fails and we haven't tried fallback yet, try localhost
-            if (retryCount === 0 && this.apiUrl.includes('vercel.app')) {
-                console.log('Production API failed, trying localhost...');
-                this.apiUrl = this.fallbackApiUrl;
-                return this.callAPI(input, retryCount + 1);
-            }
-            
             // Retry logic for network errors
             if (retryCount < this.maxRetries && this.isRetryableError(error)) {
                 console.log(`Retrying... (${retryCount + 1}/${this.maxRetries})`);
@@ -252,7 +223,7 @@ class AIPrompter {
 
     getErrorMessage(error) {
         if (error.message.includes('Failed to fetch') || error.message.includes('fetch')) {
-            return 'Cannot connect to server. Please check your internet connection and try again.';
+            return 'Cannot connect to server. Make sure the backend is running on localhost:5000.';
         }
         
         if (error.message.includes('timeout')) {
@@ -337,7 +308,7 @@ class AIPrompter {
         this.validateInput();
         this.hideOutput();
         this.hideError();
-        this.updateStatus('Ready', 'success');
+        this.updateStatus('Ready (Local)', 'success');
         this.userInput.focus();
     }
 
