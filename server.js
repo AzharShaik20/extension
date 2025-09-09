@@ -61,6 +61,9 @@ app.post('/generate', async (req, res) => {
     console.log(`🔑 Using API key: ${GEMINI_API_KEY.substring(0, 10)}...`);
 
     // Call Gemini API
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+    
     const geminiResponse = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
       {
@@ -68,6 +71,7 @@ app.post('/generate', async (req, res) => {
         headers: {
           'Content-Type': 'application/json',
         },
+        signal: controller.signal,
         body: JSON.stringify({
           contents: [{
             parts: [{
@@ -88,6 +92,8 @@ Please provide only the refined prompt, no additional commentary or explanations
       }
     );
 
+    clearTimeout(timeoutId);
+    
     if (!geminiResponse.ok) {
       const errorData = await geminiResponse.json().catch(() => ({}));
       console.error('❌ Gemini API error:', errorData);
@@ -119,7 +125,15 @@ Please provide only the refined prompt, no additional commentary or explanations
     });
 
   } catch (error) {
+    clearTimeout(timeoutId);
     console.error('❌ Server error:', error);
+    
+    if (error.name === 'AbortError') {
+      return res.status(408).json({ 
+        error: 'Request timeout. Please try again.' 
+      });
+    }
+    
     res.status(500).json({ 
       error: 'Internal server error. Please try again later.' 
     });
