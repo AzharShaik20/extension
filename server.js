@@ -148,10 +148,29 @@ app.use((err, req, res, next) => {
   });
 });
 
-// 404 handler
+// Serve favicon.ico to prevent 404 errors
+app.get('/favicon.ico', (req, res) => {
+  res.status(204).end();
+});
+
+// Serve a simple index page for root requests
+app.get('/', (req, res) => {
+  res.json({
+    message: 'AI Prompter Backend API',
+    version: '1.0.0',
+    endpoints: {
+      health: '/health',
+      generate: '/generate (POST)'
+    },
+    status: 'running'
+  });
+});
+
+// 404 handler for undefined routes
 app.use('*', (req, res) => {
   res.status(404).json({ 
-    error: 'Endpoint not found' 
+    error: 'Endpoint not found',
+    availableEndpoints: ['/health', '/generate']
   });
 });
 

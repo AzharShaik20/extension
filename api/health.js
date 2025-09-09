@@ -9,8 +9,16 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
+  // Handle favicon requests
+  if (req.url === '/favicon.ico') {
+    return res.status(204).end();
+  }
+
   if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ 
+      error: 'Method not allowed',
+      message: 'This endpoint only accepts GET requests'
+    });
   }
 
   res.json({ 
