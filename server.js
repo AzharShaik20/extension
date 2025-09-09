@@ -58,10 +58,11 @@ app.post('/generate', async (req, res) => {
     }
 
     console.log(`📝 Processing request: "${userInput.substring(0, 50)}..."`);
+    console.log(`🔑 Using API key: ${GEMINI_API_KEY.substring(0, 10)}...`);
 
     // Call Gemini API
     const geminiResponse = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
       {
         method: 'POST',
         headers: {
@@ -90,8 +91,10 @@ Please provide only the refined prompt, no additional commentary or explanations
     if (!geminiResponse.ok) {
       const errorData = await geminiResponse.json().catch(() => ({}));
       console.error('❌ Gemini API error:', errorData);
+      console.error('❌ Response status:', geminiResponse.status);
+      console.error('❌ Response headers:', geminiResponse.headers);
       return res.status(500).json({ 
-        error: 'Failed to generate prompt. Please try again.' 
+        error: `Failed to generate prompt. API Error: ${errorData.error || 'Unknown error'}` 
       });
     }
 
